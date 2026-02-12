@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WARNING - HANZZ OPERATION SYSTEM</title>
+  <style>
+    :root {
+      --red: #ff2d2d;
+      --dark: #0a0000;
+      --green: #00ff41;
+      --yellow: #ffff44;
+      --orange: #ff6600;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      min-height: 100vh;
+      background: var(--dark);
+      color: var(--red);
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .matrix { position: fixed; inset: 0; z-index: -1; opacity: 0.06; pointer-events: none; }
+    .container {
+      width: 100%;
+      max-width: 850px;
+      padding: 1.8rem 1.3rem;
+      border: 3px solid var(--red);
+      border-radius: 12px;
+      background: rgba(10,0,0,0.93);
+      box-shadow: 0 0 35px rgba(255,45,45,0.35);
+      text-align: center;
+    }
+    .logos {
+      display: flex;
+      justify-content: center;
+      gap: clamp(1rem, 5vw, 2.5rem);
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .logos img {
+      max-width: clamp(100px, 25vw, 160px);
+      height: auto;
+      filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));
+      object-fit: contain;
+    }
+    h1 { font-size: clamp(2.4rem, 10vw, 3.6rem); text-transform: uppercase; letter-spacing: 0.18em; text-shadow: 0 0 16px var(--red); margin-bottom: 0.5rem; }
+    .subtitle { font-size: clamp(1.6rem, 7vw, 2.0rem); color: var(--orange); margin-bottom: 1rem; }
+    .warning { font-size: clamp(1.1rem, 5vw, 1.4rem); line-height: 1.5; margin: 1rem 0 1.6rem; white-space: pre-line; }
+    .timer { font-size: clamp(2.8rem, 12vw, 4.5rem); font-weight: bold; color: var(--yellow); text-shadow: 0 0 22px var(--yellow); margin: 1rem 0 1.8rem; min-height: 1em; }
+    .pin-section { margin: 1.5rem 0; }
+    .pin-label { font-size: clamp(1.3rem, 6vw, 1.6rem); margin-bottom: 0.8rem; }
+    #pin { font-size: clamp(2.2rem, 10vw, 3rem); width: 100%; max-width: 380px; padding: 1rem 0.6rem; text-align: center; letter-spacing: 1.6rem; background: #111; color: transparent; text-shadow: 0 0 0 var(--green); border: 2px solid var(--red); border-radius: 8px; font-family: monospace; }
+    .buttons { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 1.6rem; }
+    button { font-size: clamp(1.3rem, 6vw, 1.5rem); padding: 1.1rem 2.2rem; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .btn-pin { background: var(--orange); color: white; }
+    .btn-pin:hover { background: #ff8800; transform: scale(1.03); }
+    .btn-wa { background: #25D366; color: white; }
+    .btn-wa:hover { background: #20b858; transform: scale(1.03); }
+    .blink { animation: blink 1.4s infinite alternate; }
+    @keyframes blink { 0%,100% {opacity:1;} 50% {opacity:0.4;} }
+    .success { display: none; color: #00ff88; }
+    .success h2 { font-size: clamp(2.8rem, 10vw, 4rem); text-shadow: 0 0 20px #00ff88; margin: 1.5rem 0; }
+    .note { font-size: clamp(1rem, 4.5vw, 1.2rem); color: #888; margin-top: 2.5rem; line-height: 1.4; }
+    @media (min-width: 500px) {
+      .buttons { flex-direction: row; justify-content: center; gap: 1.5rem; }
+      .container { padding: 2.2rem 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas class="matrix" id="matrix"></canvas>
+
+<!-- Audio musik latar (loop, volume rendah) -->
+<audio id="bgMusic" loop>
+  <source src="https://files.catbox.moe/cia305.mp3" type="audio/mpeg">
+  Browser kamu tidak support audio.
+</audio>
+
+<div class="container" id="main">
+  <div class="logos">
+    <img src="https://files.catbox.moe/hkyt0j.jpg" alt="Garuda Pancasila">
+    <img src="https://files.catbox.moe/wl9gl9.png" alt="Logo HANZZ">
+  </div>
+
+  <h1 class="blink">WARNING!</h1>
+  <div class="subtitle">HANZZ OPERATION SYSTEM</div>
+
+  <div class="warning">
+    DATA ANDA TELAH DIAMBIL DAN SEDANG DIPANTAU OLEH  
+    HANZZ OPERATION SYSTEM
+
+    SEMUA FILE AKAN DIHAPUS PERMANEN  
+    JIKA TIDAK MEMBAYAR DALAM
+  </div>
+
+  <div class="timer" id="timer">01:00:00</div>
+
+  <div class="pin-section">
+    <div class="pin-label">MASUKKAN PIN PEMULIHAN (6 DIGIT):</div>
+    <input type="text" id="pin" maxlength="6" placeholder="••••••">
+
+    <div class="buttons">
+      <button class="btn btn-pin" onclick="cekPin()">VERIFIKASI PIN</button>
+      <button class="btn btn-wa" onclick="keWA()">HUBUNGI WHATSAPP (100K)</button>
+    </div>
+  </div>
+
+  <div class="note">
+    JANGAN COBA RESTART ATAU TUTUP → DATA AKAN HILANG SELAMANYA
+  </div>
+</div>
+
+<div class="container success" id="sukses">
+  <div class="logos">
+    <img src="https://files.catbox.moe/hkyt0j.jpg" alt="Garuda Pancasila">
+    <img src="https://files.catbox.moe/wl9gl9.png" alt="Logo HANZZ">
+  </div>
+
+  <h2>PIN BENAR!</h2>
+  <div style="font-size: clamp(1.3rem, 5vw, 1.7rem); line-height:1.5; margin: 1.5rem 0;">
+    Proses pemulihan sedang berjalan...<br><br>
+    <strong>Semua file dan aplikasi Anda berhasil dikembalikan.</strong><br><br>
+    Terima kasih telah mengikuti prosedur HANZZ OPERATION SYSTEM.
+  </div>
+  <div class="note">(Ini cuma prank visual – santai aja 😏)</div>
+</div>
+
+<script>
+// Audio element
+const bgMusic = document.getElementById('bgMusic');
+bgMusic.volume = 0.3; // volume rendah biar serem tapi ga kaget
+
+// Play musik setelah user klik sekali (karena policy autoplay)
+let musicPlayed = false;
+document.addEventListener('click', function playMusicOnce() {
+  if (!musicPlayed) {
+    bgMusic.play().catch(err => console.log('Autoplay blocked:', err));
+    musicPlayed = true;
+  }
+}, { once: true });
+
+// Timer countdown
+let waktu = 3600;
+const timerEl = document.getElementById('timer');
+function updateTimer() {
+  let jam = Math.floor(waktu / 3600).toString().padStart(2, '0');
+  let menit = Math.floor((waktu % 3600) / 60).toString().padStart(2, '0');
+  let detik = (waktu % 60).toString().padStart(2, '0');
+  timerEl.textContent = jam + ':' + menit + ':' + detik;
+  if (waktu > 0) waktu--; else timerEl.textContent = 'WAKTU HABIS';
+}
+updateTimer();
+setInterval(updateTimer, 1000);
+
+// PIN input hanya angka
+const pinInput = document.getElementById('pin');
+pinInput.addEventListener('input', () => {
+  pinInput.value = pinInput.value.replace(/\D/g, '');
+});
+
+// Cek PIN
+function cekPin() {
+  if (pinInput.value === '250511') {
+    document.getElementById('main').style.display = 'none';
+    document.getElementById('sukses').style.display = 'block';
+    bgMusic.play(); // play lagi kalau sempat pause
+  } else {
+    alert('PIN SALAH! Coba lagi atau hubungi WA segera.');
+  }
+}
+
+// Buka WA
+function keWA() {
+  const no = '6282228928028';
+  const msg = encodeURIComponent('Halo HANZZ, saya mau bayar 100k untuk unlock data. 🤓);
+  window.open('https://wa.me/' + no + '?text=' + msg, '_blank');
+  bgMusic.play(); // pastikan musik jalan
+}
+
+// Matrix rain
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+const chars = '01HANZZ@#$%abcdefghijklmnopqrstuvwxyz';
+const font = 14;
+const kolom = Math.floor(canvas.width / font);
+let drops = Array(kolom).fill(1);
+
+function draw() {
+  ctx.fillStyle = 'rgba(0,0,0,0.05)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#0f0';
+  ctx.font = font + 'px monospace';
+  drops.forEach((y, i) => {
+    const text = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(text, i * font, y * font);
+    if (y * font > canvas.height && Math.random() > 0.97) drops[i] = 0;
+    drops[i]++;
+  });
+}
+setInterval(draw, 60);
+</script>
+</body>
+</html>
